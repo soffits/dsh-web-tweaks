@@ -1,0 +1,4 @@
+# Bundle layer for dsh-session-model: one host row, no tools, no config.
+- insert:
+    - id: session-model
+      name: '@soffits/dsh-session-model'
