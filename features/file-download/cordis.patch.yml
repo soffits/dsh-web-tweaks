@@ -1,0 +1,4 @@
+# Bundle layer for dsh-file-download: one row that loads the browser module.
+- insert:
+    - id: file-download
+      name: 'dsh-file-download'
