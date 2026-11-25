@@ -1,0 +1,51 @@
+{
+  "name": "dsh-subagent-model",
+  "version": "0.1.0",
+  "description": "Shows a read-only model label in the DeepSeek Harness Web UI composer of subagent sessions, where the model picker is hidden.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-model-selection"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "check": "for f in index.js client.js test/*.js; do node --check \"$f\" || exit 1; done"
+  },
+  "keywords": ["dsh-plugin", "deepseek-harness", "dsh", "subagent", "model"],
+  "author": "Sakina",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/soffits/dsh-subagent-model.git" },
+  "homepage": "https://github.com/soffits/dsh-subagent-model#readme",
+  "bugs": { "url": "https://github.com/soffits/dsh-subagent-model/issues" }
+}

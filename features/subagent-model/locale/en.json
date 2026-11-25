@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Subagent model",
+    "description": "Shows which model and reasoning effort a subagent session runs, as a read-only label in the composer where the model picker sits in other sessions."
+  }
+}
