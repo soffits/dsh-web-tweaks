@@ -1,0 +1,68 @@
+{
+  "name": "dsh-custom-css",
+  "version": "0.1.0",
+  "description": "Custom CSS for the DeepSeek Harness Web UI: your own stylesheet from the plugin row, plus a default fix that stops the whole page from scrolling after a reconnect.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "src/*.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "UPSTREAM.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": []
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "check": "for f in index.js client.js src/*.js test/*.js; do node --check \"$f\" || exit 1; done"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/schemastery": "^3.19.0"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "css",
+    "theme",
+    "styles"
+  ],
+  "author": "Sakina",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soffits/dsh-custom-css.git"
+  },
+  "homepage": "https://github.com/soffits/dsh-custom-css#readme",
+  "bugs": {
+    "url": "https://github.com/soffits/dsh-custom-css/issues"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "^3.18.5"
+  }
+}
