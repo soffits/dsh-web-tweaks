@@ -1,4 +1,0 @@
-# Bundle layer for dsh-subagent-model: one row, no settings.
-- insert:
-    - id: subagent-model
-      name: 'dsh-subagent-model'

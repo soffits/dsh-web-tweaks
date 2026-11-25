@@ -12,9 +12,8 @@ function loadModule() {
 const { id, module } = loadModule()
 const { listLimit, stateForHeight, parseState } = module
 
-test('registers under the package name with no injected services', () => {
-  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
-  assert.equal(id, pkg.name)
+test('registers under its own id with no injected services', () => {
+  assert.equal(id, 'dsh-sidebar-split')
   assert.deepEqual(module.inject, [])
 })
 

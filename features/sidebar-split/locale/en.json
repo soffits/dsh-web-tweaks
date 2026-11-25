@@ -1,6 +1,0 @@
-{
-  "meta": {
-    "title": "Sidebar split",
-    "description": "Splits the left sidebar into two resizable panes, like VS Code: drag the line between the panel list and Workspaces, double-click it to hide the list. Each pane scrolls on its own, and the size is kept per browser."
-  }
-}

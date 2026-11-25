@@ -1,0 +1,5 @@
+# Bundle layer: one host row and the browser half; no tools, so enabling or disabling it is safe while sessions run.
+# Every feature has its own switch in the row's config (README.md, "Settings").
+- insert:
+    - id: web-tweaks
+      name: '@soffits/dsh-web-tweaks'

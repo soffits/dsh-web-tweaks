@@ -1,6 +1,0 @@
-{
-  "meta": {
-    "title": "Barre latérale partagée",
-    "description": "Partage la barre latérale gauche en deux volets redimensionnables, comme VS Code : faites glisser la ligne entre la liste des panneaux et les espaces de travail, double-cliquez dessus pour masquer la liste. Chaque volet défile seul, et la taille est gardée dans chaque navigateur."
-  }
-}

@@ -1,22 +1,16 @@
-# dsh-custom-css
+# Custom CSS (`customCss`)
+
+A feature of [@soffits/dsh-web-tweaks](../../README.md), switched by `customCss.enabled` in the `web-tweaks` row. Its history before the merge is in the archived [soffits/dsh-custom-css](https://github.com/soffits/dsh-custom-css) repository.
 
 Custom CSS for the DeepSeek Harness (DSH) Web UI, as a small plugin with no dependency on any other plugin.
 
-- **Your own CSS.** Put a stylesheet in the `css` field of the plugin row; it is applied to the whole page.
+- **Your own CSS.** Put a stylesheet in `customCss.css` of the `web-tweaks` row; it is applied to the whole page.
 - **Overflow fix, on by default.** DSH's page sets `html, body, #root` to `height: 100%` and clips nothing, so anything that sticks out past the window makes the whole document scrollable, and the app header scrolls away (seen after a disconnect and reconnect). The fix clips `html` and `body` to the window, keeping `body` in normal flow (a fixed `body` gets drawn away from where taps land on iPhones after a rotation). Details: [UPSTREAM.md](UPSTREAM.md).
 - **Edge to edge, off by default.** For DSH as a home-screen app on a phone: the page asks for the whole screen, reaching under the status bar and the home indicator, and DSH keeps inside the safe area by itself. How much of the screen iOS then hands over differs between versions. See [Edge to edge](#edge-to-edge).
 - **Reports, off by default.** For layout and tap problems on a device you cannot look at: each open page sends what its browser reports (window, viewport and screen sizes, safe-area insets, display mode) to your DSH, on load and whenever it changes, and a few taps after each change. Nothing is drawn. See [Reports](#reports).
 - **Viewport probe, off by default.** The same readings drawn over the page, with a ring where each tap lands, so one screenshot shows whether drawing and tapping agree.
 
-## Installation
-
-```bash
-dsh plugin --profile web add github:soffits/dsh-custom-css
-```
-
-or add the bundle in the Web UI's plugin manager. A local checkout works too: `plugin_manager install_bundle` with the folder as the target.
-
-## Configuration
+## Settings (under `customCss`)
 
 | Setting | Default | Description |
 | --- | --- | --- |
@@ -37,7 +31,7 @@ With `edgeToEdge` on, the page asks for the whole screen (`viewport-fit=cover`, 
 
 ### Turning it on
 
-1. Set `edgeToEdge: true` on the plugin row and reload the page.
+1. Set `customCss.edgeToEdge: true` in the `web-tweaks` row and reload the page.
 2. A home-screen app that is already installed has to be added again: iOS decides how the status bar is drawn when the icon is added, not when the app starts. Open DSH in Safari, wait until it has loaded, use Share → Add to Home Screen, then delete the old icon.
 
 A home-screen app has its own storage, separate from Safari's and from the old icon's. The new one starts empty: you sign in again, and whatever DSH or its plugins keep in the browser (drafts, layout choices such as panel sizes, pairings, offline copies) is gone. Everything on the server stays.
@@ -117,7 +111,3 @@ An iOS home-screen app can come back from a rotation with the window at its new 
 | `cover` | Leaves the layout alone and gives DSH's box the visible area for as long as the state lasts. Later tries are not reached, so list it last. |
 
 Each try is reported as `before:<name>` and `after:<name>`, so one rotation tells which of them helped. It is an experiment: none is known to work, and a window that is legitimately smaller than its layout would set it off.
-
-## Development
-
-`npm test` runs the unit tests, `npm run check` checks syntax.

@@ -1,0 +1,72 @@
+{
+  "name": "@soffits/dsh-web-tweaks",
+  "version": "0.1.0",
+  "description": "Small fixes and additions for the DeepSeek Harness Web UI in one plugin, each with its own switch: your own CSS and phone layout fixes, a resizable sidebar split, a download button in the file preview, a model label for subagent sessions, and model picks that stay in their own session.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "src/*.js",
+    "features/custom-css/index.js",
+    "features/custom-css/src/*.js",
+    "features/custom-css/client.js",
+    "features/session-model/index.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-model-selection",
+        "@deepseek-ai/dsh-client-ui-file-actions",
+        "@deepseek-ai/dsh-client-ui-context-menu",
+        "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "@deepseek-ai/dsh-api-workspace-files"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+  },
+  "scripts": {
+    "build": "node scripts/build-client.js",
+    "check": "for f in index.js client.js src/*.js scripts/*.js features/*/*.js features/*/src/*.js test/*.js features/*/test/*.js; do [ -e \"$f\" ] || continue; node --check \"$f\" || exit 1; done",
+    "test": "node --test \"test/*.test.js\" \"features/*/test/*.test.js\""
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "^3.18.5"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/schemastery": "^3.19.0"
+  },
+  "keywords": ["dsh", "deepseek-harness", "dsh-plugin", "css", "sidebar", "download"],
+  "license": "MIT",
+  "author": "Sakina",
+  "homepage": "https://github.com/soffits/dsh-web-tweaks#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soffits/dsh-web-tweaks.git"
+  },
+  "bugs": "https://github.com/soffits/dsh-web-tweaks/issues"
+}

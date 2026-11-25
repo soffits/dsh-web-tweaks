@@ -1,4 +1,0 @@
-# Bundle layer for dsh-sidebar-split: one row that loads the browser module.
-- insert:
-    - id: sidebar-split
-      name: 'dsh-sidebar-split'

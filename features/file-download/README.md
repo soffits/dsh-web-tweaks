@@ -1,4 +1,6 @@
-# dsh-file-download
+# File download (`fileDownload`)
+
+A feature of [@soffits/dsh-web-tweaks](../../README.md), switched by `fileDownload.enabled` in the `web-tweaks` row. Its history before the merge is in the archived [soffits/dsh-file-download](https://github.com/soffits/dsh-file-download) repository.
 
 A Download button for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH) Web document preview.
 
@@ -11,19 +13,7 @@ Tap a delivered file's card to open its preview, then tap Download.
 
 The download is DSH's own `fileActions.save(source, 'download')`, the same operation the right-click Download runs, so the file name, type and browser hand-off match. The bytes come through the authorized `workspaceFiles.readBytes` Remote in 2 MiB windows, so files above the Host's 32 MiB complete-read cap download too (they are held in browser memory until saved).
 
-## Install
-
-```sh
-dsh plugin --profile web add dsh-file-download
-```
-
-Then restart DSH. Needs DSH 0.2.2-rc.1 or later (the `fileActions` service).
-
 ## Limits
 
 - The delivery card itself still has no Download: its action slot (`deliverables.file.actions`) doesn't receive the file's path, so a plugin can't offer one there. Opening the preview is one extra tap.
 - Very large files are assembled in memory before the browser saves them.
-
-## License
-
-MIT

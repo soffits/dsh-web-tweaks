@@ -1,8 +1,0 @@
-# Bundle layer for dsh-custom-css. `css` is your own stylesheet; `fixOverflow`
-# keeps the whole page from scrolling after a reconnect (see README.md).
-- insert:
-    - id: custom-css
-      name: 'dsh-custom-css'
-      config:
-        fixOverflow: true
-        css: ''

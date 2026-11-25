@@ -1,6 +1,0 @@
-{
-  "meta": {
-    "title": "Custom CSS",
-    "description": "Adds your own CSS to the Web UI, and by default fixes the whole page becoming scrollable after a disconnect and reconnect."
-  }
-}
