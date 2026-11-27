@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- File download: the card of a file the agent delivers now has its own short Download button, for every file type. It was in the preview header only, so a phone needed an extra tap and, on some files, a preview that could not open. (Published as 0.1.1 first; re-released as a minor bump because it adds a feature. The code is the same.)
+
 ## 0.1.1
 
 - File download: the card of a file the agent delivers now has its own short Download button, for every file type. It was in the preview header only, so a phone needed an extra tap and, on some files, a preview that could not open.

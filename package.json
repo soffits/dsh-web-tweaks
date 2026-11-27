@@ -1,6 +1,6 @@
 {
   "name": "@soffits/dsh-web-tweaks",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Small fixes and additions for the DeepSeek Harness Web UI in one plugin, each with its own switch: your own CSS and phone layout fixes, a resizable sidebar split, a download button on file cards and in the file preview, a model label for subagent sessions, and model picks that stay in their own session.",
   "type": "module",
   "main": "./index.js",
