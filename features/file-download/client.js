@@ -2,8 +2,9 @@
  * Browser half of dsh-file-download. DSH 0.2.2 can download a Session file
  * only from its context menu, which opens on right-click or the keyboard, so
  * a phone has no way to reach it. This module adds a visible Download button
- * to the document preview: in its header next to the open-in-app control, and
- * in the empty state of a file the preview cannot show (a zip, an installer).
+ * to the document preview: in its header, in the empty state of a file the
+ * preview cannot show (a zip, an installer), and on the card of a delivered
+ * (presented) file.
  *
  * The download itself is DSH's own `fileActions.save(source, 'download')`,
  * the same operation the context menu runs. The bytes come from the
@@ -131,6 +132,27 @@ window.__ModuleLoader__.load({
       return new Blob(parts, { type: mediaType })
     }
 
+    /**
+     * Session id a delivery card's action URL names (the card's slot passes only that URL).
+     * @param actionUrl - the card's `present.open` route with its query.
+     * @returns the Session id, or '' when the URL doesn't carry one.
+     */
+    function sessionIdOf(actionUrl) {
+      try { return new URL(actionUrl, 'http://localhost/').searchParams.get('sessionId') ?? '' } catch { return '' }
+    }
+
+    /**
+     * The absolute path a delivery card stands for. The card's action slot is not
+     * given the file, but the card's own preview button carries it as its title.
+     * @param element - any element inside the card.
+     * @returns the path, or '' when the card has no path to read.
+     */
+    function cardPathOf(element) {
+      const title = element?.closest?.('[data-presented-file]')?.querySelector('button[title]')?.getAttribute('title')
+      if (typeof title !== 'string') return ''
+      return title.startsWith('/') || /^[A-Za-z]:[\\/]/u.test(title) ? title : ''
+    }
+
     /** Header button sized like the preview's other 24px icon controls. */
     const CSS = `
 .dsh-fd-icon { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;
@@ -138,6 +160,12 @@ window.__ModuleLoader__.load({
 .dsh-fd-icon:hover:not(:disabled) { background: var(--dsw-alias-button-ghost-bg-hover, rgba(127, 127, 127, 0.14)); }
 .dsh-fd-icon:disabled { opacity: 0.5; cursor: default; }
 .dsh-fd-icon svg { width: 16px; height: 16px; }
+.dsh-fd-card { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 8px;
+  border: 0.5px solid var(--dsw-alias-border-l1, rgba(127, 127, 127, 0.3)); background: transparent; color: inherit;
+  font: inherit; font-size: 12px; line-height: 20px; cursor: pointer; white-space: nowrap; }
+.dsh-fd-card:hover:not(:disabled) { background: var(--dsw-alias-button-ghost-bg-hover, rgba(127, 127, 127, 0.14)); }
+.dsh-fd-card:disabled { opacity: 0.5; cursor: default; }
+.dsh-fd-card svg { width: 14px; height: 14px; }
 `
 
     function installStyle() {
@@ -193,6 +221,35 @@ window.__ModuleLoader__.load({
       }, busy ? props.t('downloading') : props.t('download'))
     }
 
+    /**
+     * Button on a delivered file's card. It reads the file's path from the card at
+     * click time and downloads it, whatever the file type.
+     * @param props - the card slot's props (`actionUrl`) and the injected `start`.
+     */
+    function CardDownload(props) {
+      const anchor = React.useRef(null)
+      const [busy, setBusy] = React.useState(false)
+      const running = React.useRef(null)
+      React.useEffect(() => () => { running.current?.abort() }, [])
+      const onClick = React.useCallback(() => {
+        if (running.current !== null) return
+        const path = cardPathOf(anchor.current)
+        if (path === '') return
+        const controller = new AbortController()
+        running.current = controller
+        setBusy(true)
+        void props.start(sessionIdOf(props.actionUrl), path, controller.signal).finally(() => {
+          if (running.current === controller) running.current = null
+          if (!controller.signal.aborted) setBusy(false)
+        })
+      }, [props.actionUrl, props.start])
+      const label = busy ? props.t('downloading') : props.t('download')
+      return React.createElement('button', {
+        ref: anchor, type: 'button', className: 'dsh-fd-card', disabled: busy, 'aria-label': label,
+        'data-file-download': 'card', onClick,
+      }, React.createElement(IconDownloadOutlineRegular, null), props.t('download'))
+    }
+
     const inject = ['slots', 'locale', 'fileActions', 'contextMenus', 'remote', 'remote.workspaceFiles']
 
     /**
@@ -203,25 +260,24 @@ window.__ModuleLoader__.load({
       ctx.effect(installStyle, 'file-download: style')
       ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'file-download: dictionaries')
       const t = ctx.locale.bind(NS)
-      const injected = (sessionId) => ({
-        start: async (absolutePath, signal) => {
-          const name = basenameOf(absolutePath)
-          const mediaType = mediaTypeOf(name)
-          try {
-            const result = await ctx.fileActions.save({
-              url: fileUrl(absolutePath), name, mediaType,
-              read: (readSignal) => readWhole(
-                (...args) => ctx.remote.workspaceFiles.readBytes(...args), sessionId, absolutePath, mediaType,
-                eitherSignal(signal, readSignal)),
-            }, 'download')
-            if (result.status !== 'cancelled') ctx.contextMenus.notify(t('started'), true)
-          } catch (error) {
-            if (signal.aborted) return
-            console.warn('dsh-file-download:', error)
-            ctx.contextMenus.notify(t('failed'), false)
-          }
-        },
-      })
+      const download = async (sessionId, absolutePath, signal) => {
+        const name = basenameOf(absolutePath)
+        const mediaType = mediaTypeOf(name)
+        try {
+          const result = await ctx.fileActions.save({
+            url: fileUrl(absolutePath), name, mediaType,
+            read: (readSignal) => readWhole(
+              (...args) => ctx.remote.workspaceFiles.readBytes(...args), sessionId, absolutePath, mediaType,
+              eitherSignal(signal, readSignal)),
+          }, 'download')
+          if (result.status !== 'cancelled') ctx.contextMenus.notify(t('started'), true)
+        } catch (error) {
+          if (signal.aborted) return
+          console.warn('dsh-file-download:', error)
+          ctx.contextMenus.notify(t('failed'), false)
+        }
+      }
+      const injected = (sessionId) => ({ start: (absolutePath, signal) => download(sessionId, absolutePath, signal) })
       for (const [name, component] of [
         ['sidebar.right.tab.document.actions', HeaderDownload],
         ['sidebar.right.tab.document.unpreviewable', EmptyDownload],
@@ -230,11 +286,17 @@ window.__ModuleLoader__.load({
           name, id: 'file-download', order: 100, locale: NS, inject: injected,
         }, component)), `file-download: ${name}`)
       }
+      ctx.effect(() => ctx.slots.inject('deliverables.file.actions', () => ctx.slots.register({
+        name: 'deliverables.file.actions', id: 'file-download', order: 100, locale: NS,
+        inject: () => ({ start: download }),
+      }, CardDownload)), 'file-download: deliverables.file.actions')
     }
 
     exports.apply = apply
     exports.inject = inject
     exports.basenameOf = basenameOf
+    exports.sessionIdOf = sessionIdOf
+    exports.cardPathOf = cardPathOf
     exports.mediaTypeOf = mediaTypeOf
     exports.readWhole = readWhole
     return module.exports

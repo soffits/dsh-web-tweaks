@@ -94,7 +94,7 @@ test('readWhole rejects on a failed read and on abort', async () => {
   await assert.rejects(readWhole(readBytes, 's', '/f', '', controller.signal))
 })
 
-test('apply registers a header and an empty-state control that save through fileActions', async () => {
+test('apply registers a header, an empty-state and a card control that save through fileActions', async () => {
   const { apply } = await loadModule()
   const registered = []
   const notices = []
@@ -110,7 +110,10 @@ test('apply registers a header and an empty-state control that save through file
     contextMenus: { notify: (text, ok) => { notices.push([text, ok]) } },
   }
   apply(ctx)
-  assert.deepEqual(registered.map((entry) => entry.options.name), ['sidebar.right.tab.document.actions', 'sidebar.right.tab.document.unpreviewable'])
+  assert.deepEqual(registered.map((entry) => entry.options.name), ['sidebar.right.tab.document.actions', 'sidebar.right.tab.document.unpreviewable', 'deliverables.file.actions'])
+  const card = registered[2].options.inject().start
+  await card('session-9', '/home/a/report.docx', new AbortController().signal)
+  assert.equal(saves.pop().source.name, 'report.docx')
   const { start } = registered[0].options.inject('session-1')
   await start('/home/a/Duo-signing.zip', new AbortController().signal)
   assert.equal(saves.length, 1)
@@ -119,7 +122,7 @@ test('apply registers a header and an empty-state control that save through file
   assert.equal(saves[0].source.mediaType, 'application/zip')
   assert.match(saves[0].source.url, /api\/file\?path=%2Fhome%2Fa%2FDuo-signing\.zip$/)
   assert.equal(saves[0].blob.size, 3)
-  assert.deepEqual(notices, [['started', true]])
+  assert.deepEqual(notices, [['started', true], ['started', true]])
 })
 
 test('a failed save is announced once as a failure', async () => {
@@ -141,4 +144,20 @@ test('a failed save is announced once as a failure', async () => {
     await registered[1].inject('s').start('/x/a.zip', new AbortController().signal)
   } finally { console.warn = original }
   assert.deepEqual(notices, [['failed', false]])
+})
+
+test('sessionIdOf reads the Session a delivery card names', async () => {
+  const { sessionIdOf } = await loadModule()
+  assert.equal(sessionIdOf('api/present.open?sessionId=abc-1&seq=4&index=0'), 'abc-1')
+  assert.equal(sessionIdOf('api/present.open?seq=4'), '')
+})
+
+test('cardPathOf reads the absolute path from the card the button sits in', async () => {
+  const { cardPathOf } = await loadModule()
+  const card = (title) => ({ closest: (selector) => (selector === '[data-presented-file]' ? { querySelector: () => ({ getAttribute: () => title }) } : null) })
+  assert.equal(cardPathOf(card('/home/a/Duo-signing.zip')), '/home/a/Duo-signing.zip')
+  assert.equal(cardPathOf(card('C:\\out\\报告.pdf')), 'C:\\out\\报告.pdf')
+  assert.equal(cardPathOf(card('relative/file.zip')), '')
+  assert.equal(cardPathOf({ closest: () => null }), '')
+  assert.equal(cardPathOf(null), '')
 })

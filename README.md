@@ -6,7 +6,7 @@ Small fixes and additions for the [DeepSeek Harness](https://github.com/deepseek
 | --- | --- | --- |
 | [Custom CSS](features/custom-css/README.md) | `customCss` | Your own CSS for the whole Web UI, a fix that keeps the page from scrolling as a whole, and opt-in phone settings (edge to edge, device reports, a viewport probe). |
 | [Sidebar split](features/sidebar-split/README.md) | `sidebarSplit` | The sidebar's panel list and the Workspaces become two panes with a draggable line between them; the split is kept per browser. |
-| [File download](features/file-download/README.md) | `fileDownload` | A Download button in the document preview, so a phone can download Session files (DSH offers download only in a right-click menu). |
+| [File download](features/file-download/README.md) | `fileDownload` | A Download button on delivered-file cards and in the document preview, so a phone can download Session files (DSH offers download only in a right-click menu). |
 | [Subagent model label](features/subagent-model/README.md) | `subagentModel` | A read-only label with the model and reasoning effort in a subagent session's composer. |
 | [Session-scoped model picks](features/session-model/README.md) | `sessionModel` | A model picked in a Web chat stays in that chat instead of becoming the default for every new session. |
 
